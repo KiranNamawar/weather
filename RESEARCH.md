@@ -42,6 +42,13 @@
     -   Optional: `&units=metric` or `&units=imperial`
 -   Docs: https://openweathermap.org/current
 
+### 5-Day / 3-Hour Forecast
+
+-   Endpoint:
+    -   `https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API_KEY}`
+    -   Optional: `&units=metric` or `&units=imperial`
+-   Docs: https://openweathermap.org/forecast5
+
 ### Geocoding API
 
 -   Direct geocoding (city/state/country to coordinates):
@@ -51,13 +58,6 @@
 -   Reverse geocoding (coordinates to place name):
     -   `https://api.openweathermap.org/geo/1.0/reverse?lat={lat}&lon={lon}&limit={limit}&appid={API_KEY}`
 -   Docs: https://openweathermap.org/api/geocoding-api
-
-### 5-Day / 3-Hour Forecast
-
--   Endpoint:
-    -   `https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API_KEY}`
-    -   Optional: `&units=metric` or `&units=imperial`
--   Docs: https://openweathermap.org/forecast5
 
 ### Air Pollution API
 
