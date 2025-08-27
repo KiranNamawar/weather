@@ -431,3 +431,23 @@ function mockAirPollution() {
         ],
     };
 }
+
+function mockLocation() {
+    // Endpoint: http://ip-api.com/json/
+    return {
+        status: "success",
+        country: "India",
+        countryCode: "IN",
+        region: "MH",
+        regionName: "Maharashtra",
+        city: "Aurangabad",
+        zip: "431001",
+        lat: 19.8776,
+        lon: 75.3423,
+        timezone: "Asia/Kolkata",
+        isp: "Reliance Jio Infocomm Limited",
+        org: "Reliance Jio Infocomm Limited",
+        as: "AS55836 Reliance Jio Infocomm Limited",
+        query: "152.56.6.5",
+    };
+}

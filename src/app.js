@@ -1,1 +1,5 @@
-import "./api.js";
+
+
+window.addEventListener("DOMContentLoaded", () => {
+
+});
