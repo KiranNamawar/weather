@@ -51,13 +51,9 @@
 
 ### Geocoding API
 
--   Direct geocoding (city/state/country to coordinates):
-    -   `https://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API_KEY}`
--   ZIP/postal code to coordinates:
-    -   `https://api.openweathermap.org/geo/1.0/zip?zip={zip code},{country code}&appid={API_KEY}`
--   Reverse geocoding (coordinates to place name):
-    -   `https://api.openweathermap.org/geo/1.0/reverse?lat={lat}&lon={lon}&limit={limit}&appid={API_KEY}`
--   Docs: https://openweathermap.org/api/geocoding-api
+-   Direct geocoding (city to coordinates):
+    -   `https://geocoding-api.open-meteo.com/v1/search?name={city}&count={limit}&language={en}&format={json}`
+-   Docs: https://open-meteo.com/en/docs/geocoding-api
 
 ### Air Pollution API
 

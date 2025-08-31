@@ -1,8 +1,8 @@
-import { Config } from "./config.js";
+import { AppConfig } from "./config.js";
 
-class Location {
+class AppLocation {
     static async getLocationFromIP() {
-        const response = await fetch(Config.IP_API_ENDPOINT);
+        const response = await fetch(AppConfig.IP_API_ENDPOINT);
         if (!response.ok) {
             throw new Error("Failed to fetch location from IP.");
         }
@@ -47,4 +47,4 @@ class Location {
     }
 }
 
-export { Location };
+export { AppLocation };

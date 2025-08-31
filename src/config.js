@@ -1,4 +1,4 @@
-class Config {
+class AppConfig {
     static #IP_API_KEY = "1e3e99b30f59e4";
     static #WEATHER_API_KEY = "d3d175e8b848468220e5e437ef7601c3";
 
@@ -15,10 +15,10 @@ class Config {
         }`;
     }
     static geocodingApiEndpoint(city, limit = 5) {
-        return `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
+        return `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
             city
-        )}&limit=${limit}&appid=${this.#WEATHER_API_KEY}`;
+        )}&count=${limit}&language=en&format=json`;
     }
 }
 
-export { Config };
+export { AppConfig };
