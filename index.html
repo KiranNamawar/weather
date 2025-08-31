@@ -19,7 +19,6 @@
             crossorigin="anonymous"
         ></script>
 
-
         <!-- Google Fonts: Nunito -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -29,8 +28,18 @@
         />
     </head>
     <body>
-        <h1 class="text-center">
-            Weather App
-        </h1>
+        <header>
+            <h1 class="text-center">Weather App</h1>
+        </header>
+        <main>
+            <dialog id="search" class="">
+                <form method="dialog">
+                    <input type="search" placeholder="Enter City name" />
+                    <ul id="search-results"></ul>
+                    <ul id="previous-searches"></ul>
+                </form>
+            </dialog>
+            <button>Open Modal</button>
+        </main>
     </body>
 </html>
