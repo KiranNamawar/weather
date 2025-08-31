@@ -40,8 +40,8 @@ function renderResult(data) {
         const info = encodeURIComponent(JSON.stringify(item));
         const listItem = document.createElement("li");
         listItem.innerHTML = `
-            <button type="submit" data-info="${info}">
-                <span>${item.city}</span>,
+            <button type="submit" data-info="${info}" class="w-full">
+                <span class="font-bold">${item.city}</span>
                 <span>${item.region ?? ""}, ${item.country ?? ""}</span>
             </button>
         `;
@@ -57,8 +57,8 @@ function renderPrevSearches() {
             const info = encodeURIComponent(JSON.stringify(item));
             const listItem = document.createElement("li");
             listItem.innerHTML = `
-                <button type="submit" data-info="${info}">
-                    <span>${item.city}</span>,
+                <button type="submit" data-info="${info}" class="">
+                    <span>${item.city}</span>
                     <span>${item.region ?? ""}, ${item.country ?? ""}</span>
                 </button>
             `;
@@ -70,16 +70,30 @@ function renderPrevSearches() {
 function openSearch() {
     return new Promise((resolve) => {
         result.innerHTML = "";
+        const spinner = form.querySelector('span.absolute');
         let timer;
         function handleInput() {
             clearTimeout(timer);
             const value = input.value.trim();
-            if (value.length < 2) return;
+            if (value.length < 2) {
+                result.innerHTML = "";
+                spinner.hidden = true;
+                return;
+            }
             timer = setTimeout(async () => {
+                spinner.hidden = false;
+                try {
                 const res = await fetch(AppConfig.geocodingApiEndpoint(value));
-                const result = (await res.json()).results;
-                if (!result.length) return;
-                const data = result.map((item) => {
+                if (!res.ok) {
+                    throw new Error("API error: " + res.statusText);
+                }
+                const list = (await res.json()).results;
+                if (!list || !list.length) {
+                    result.innerHTML = "<li>No results found</li>";
+                    spinner.hidden = true;
+                    return;
+                }
+                const data = list.map((item) => {
                     const {
                         name: city,
                         latitude,
@@ -90,9 +104,15 @@ function openSearch() {
                     return { city, latitude, longitude, region, country };
                 });
                 renderResult(data);
-            }, 300);
-        }
-        input.addEventListener("input", handleInput);
+            } catch (error) {
+                console.error("Error loading search results:", error);
+                result.innerHTML = "<li>Error loading search results, please try again later.</li>";
+            } finally {
+                spinner.hidden = true;
+            }
+        }, 300);
+    }
+    input.addEventListener("input", handleInput);
 
         loadPrevSearches();
         renderPrevSearches();
@@ -110,24 +130,29 @@ function openSearch() {
             { once: true }
         );
 
-        dialog.addEventListener(
-            "close",
-            () => {
-                form.removeEventListener("input", handleInput);
-                form.reset();
-                resolve(null);
-            },
+        function closeDialog() {
+            form.removeEventListener("input", handleInput);
+            form.reset();
+            resolve(null);
+            dialog.close();
+        }
+
+        dialog.addEventListener("close", closeDialog, { once: true });
+        form.querySelector("button#close-search").addEventListener(
+            "click",
+            closeDialog,
             { once: true }
         );
 
         dialog.showModal();
+        input.focus();
     });
 }
 
 export { openSearch };
 
 //Test
-const button = document.querySelector("button");
+const button = document.querySelector("dialog + button");
 button.onclick = async () => {
     const result = await openSearch();
     if (result) {
