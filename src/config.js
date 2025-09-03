@@ -19,6 +19,11 @@ class AppConfig {
             city
         )}&count=${limit}&language=en&format=json`;
     }
+    static reverseGeoCodingApiEndpoint(lat, lon, limit = 5) {
+        return `http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=${limit}&appid=${
+            this.#WEATHER_API_KEY
+        }`;
+    }
 }
 
 export { AppConfig };

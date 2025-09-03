@@ -1,4 +1,4 @@
-import { AppConfig } from "./config";
+import { AppConfig } from "./config.js";
 
 const dialog = document.querySelector("dialog#search");
 const form = dialog.querySelector("form");
@@ -41,6 +41,9 @@ function renderResult(data) {
         const listItem = document.createElement("li");
         listItem.innerHTML = `
             <button type="submit" data-info="${info}" class="w-full">
+                <img src="https://flagsapi.com/${
+                    item.country_code
+                }/flat/32.png">
                 <span class="font-bold">${item.city}</span>
                 <span>${item.region ?? ""}, ${item.country ?? ""}</span>
             </button>
@@ -58,6 +61,9 @@ function renderPrevSearches() {
             const listItem = document.createElement("li");
             listItem.innerHTML = `
                 <button type="submit" data-info="${info}" class="">
+                    <img src="https://flagsapi.com/${
+                        item.country_code
+                    }/flat/32.png">
                     <span>${item.city}</span>
                     <span>${item.region ?? ""}, ${item.country ?? ""}</span>
                 </button>
@@ -70,7 +76,7 @@ function renderPrevSearches() {
 function openSearch() {
     return new Promise((resolve) => {
         result.innerHTML = "";
-        const spinner = form.querySelector('span.absolute');
+        const spinner = form.querySelector("span.absolute");
         let timer;
         function handleInput() {
             clearTimeout(timer);
@@ -83,36 +89,50 @@ function openSearch() {
             timer = setTimeout(async () => {
                 spinner.hidden = false;
                 try {
-                const res = await fetch(AppConfig.geocodingApiEndpoint(value));
-                if (!res.ok) {
-                    throw new Error("API error: " + res.statusText);
-                }
-                const list = (await res.json()).results;
-                if (!list || !list.length) {
-                    result.innerHTML = "<li>No results found</li>";
+                    const res = await fetch(
+                        AppConfig.geocodingApiEndpoint(value)
+                    );
+                    if (!res.ok) {
+                        throw new Error("API error: " + res.statusText);
+                    }
+                    const list = (await res.json()).results;
+                    console.log(list);
+                    if (!list || !list.length) {
+                        result.innerHTML = "<li>No results found</li>";
+                        spinner.hidden = true;
+                        return;
+                    }
+                    const data = list.map((item) => {
+                        const {
+                            name: city,
+                            latitude,
+                            longitude,
+                            admin1: region,
+                            country,
+                            country_code,
+                            id,
+                        } = item;
+                        return {
+                            city,
+                            region,
+                            country,
+                            country_code,
+                            latitude,
+                            longitude,
+                        };
+                    });
+                    console.log(data[0]);
+                    renderResult(data);
+                } catch (error) {
+                    console.error("Error loading search results:", error);
+                    result.innerHTML =
+                        "<li>Error loading search results, please try again later.</li>";
+                } finally {
                     spinner.hidden = true;
-                    return;
                 }
-                const data = list.map((item) => {
-                    const {
-                        name: city,
-                        latitude,
-                        longitude,
-                        admin1: region,
-                        country,
-                    } = item;
-                    return { city, latitude, longitude, region, country };
-                });
-                renderResult(data);
-            } catch (error) {
-                console.error("Error loading search results:", error);
-                result.innerHTML = "<li>Error loading search results, please try again later.</li>";
-            } finally {
-                spinner.hidden = true;
-            }
-        }, 300);
-    }
-    input.addEventListener("input", handleInput);
+            }, 300);
+        }
+        input.addEventListener("input", handleInput);
 
         loadPrevSearches();
         renderPrevSearches();
@@ -121,11 +141,12 @@ function openSearch() {
             "submit",
             (evt) => {
                 const button = evt.submitter;
-                const data = JSON.parse(
+                const parsed = JSON.parse(
                     decodeURIComponent(button.dataset.info)
                 );
-                savePrevSearches({ ...data, time: Date.now() });
-                resolve({ longitude: data.longitude, latitude: data.latitude });
+                const data = { ...parsed, time: Date.now() };
+                savePrevSearches(data);
+                resolve(data);
             },
             { once: true }
         );
@@ -152,11 +173,23 @@ function openSearch() {
 export { openSearch };
 
 //Test
+import { getCurrentWeather, getWeatherForcast } from "./weather.js";
+
 const button = document.querySelector("dialog + button");
 button.onclick = async () => {
     const result = await openSearch();
     if (result) {
         console.log("Selected location:", result);
+        const weather = await getCurrentWeather(
+            result.latitude,
+            result.longitude
+        );
+        console.log("Current weather", weather);
+        const forecast = await getWeatherForcast(
+            result.latitude,
+            result.longitude
+        );
+        console.log("Forcast", forecast);
     } else {
         console.log("Search canceled");
     }
