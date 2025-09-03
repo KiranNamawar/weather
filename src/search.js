@@ -1,4 +1,4 @@
-import { AppConfig } from "./config.js";
+import AppConfig from "./config.js";
 
 const dialog = document.querySelector("dialog#search");
 const form = dialog.querySelector("form");
@@ -121,7 +121,6 @@ function openSearch() {
                             longitude,
                         };
                     });
-                    console.log(data[0]);
                     renderResult(data);
                 } catch (error) {
                     console.error("Error loading search results:", error);

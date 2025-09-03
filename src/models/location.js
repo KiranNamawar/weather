@@ -1,4 +1,4 @@
-import { AppConfig } from "./config.js";
+import AppConfig from "./config.js";
 
 class AppLocation {
     static async getLocationFromIP() {
@@ -74,4 +74,4 @@ class AppLocation {
     }
 }
 
-export { AppLocation };
+export default AppLocation;

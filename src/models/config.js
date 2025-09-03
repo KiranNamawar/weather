@@ -26,4 +26,4 @@ class AppConfig {
     }
 }
 
-export { AppConfig };
+export default AppConfig;

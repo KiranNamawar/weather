@@ -1,7 +1,7 @@
 {
     "scripts": {
         "start": "npx serve .",
-        "tw": "npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch",
+        "tw": "npx @tailwindcss/cli -i ./src/styles/input.css -o ./src/styles/output.css --watch",
         "dev": "concurrently -k -n TAILWIND,VITE -c cyan,yellow \"npm run tw\" \"npx vite --port 3000 .\""
     },
     "dependencies": {
