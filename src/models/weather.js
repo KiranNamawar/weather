@@ -15,20 +15,29 @@ class AppWeather {
 
         const ENDPOINT =
             type === "forecast"
-                ? AppConfig.forecastWeatherApiEndpoint
-                : AppConfig.currentWeatherApiEndpoint;
+                ? AppConfig.forecastWeatherApiEndpoint(lat, lon)
+                : AppConfig.currentWeatherApiEndpoint(lat, lon);
 
         const index = CACHE.findIndex(
             (item) =>
-                item.coord.lon === Number(lon) && item.coord.lat === Number(lat)
+                item.coord &&
+                Math.round(item.coord.lon * 10000) ===
+                    Math.round(Number(lon) * 10000) &&
+                Math.round(item.coord.lat * 10000) ===
+                    Math.round(Number(lat) * 10000)
         );
 
         if (index !== -1 && CACHE[index].time + DURATION > Date.now()) {
             return CACHE[index];
         }
 
-        const res = await fetch(ENDPOINT(lat, lon));
-        const data = { ...(await res.json()), time: Date.now() };
+        const res = await fetch(ENDPOINT);
+        const apiData = await res.json();
+        const data = {
+            ...apiData,
+            coord: apiData.coord || apiData.city?.coord,
+            time: Date.now(),
+        };
 
         if (index !== -1) {
             CACHE[index] = data;
