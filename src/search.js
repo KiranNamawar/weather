@@ -82,7 +82,7 @@ function openSearch() {
             clearTimeout(timer);
             const value = input.value.trim();
             if (value.length < 2) {
-                result.innerHTML = "";
+                result.innerHTML = "<p>Minimum 2 characters required</p>";
                 spinner.hidden = true;
                 return;
             }
@@ -124,6 +124,7 @@ function openSearch() {
                 } catch (error) {
                     console.error("Error loading search results:", error);
                     result.innerHTML =
+                        // TODO: Show toast
                         "<li>Error loading search results, please try again later.</li>";
                 } finally {
                     spinner.hidden = true;

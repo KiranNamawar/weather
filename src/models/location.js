@@ -2,18 +2,23 @@ import AppConfig from "./config.js";
 
 class AppLocation {
     static async getLocationFromIP() {
-        const response = await fetch(AppConfig.IP_API_ENDPOINT);
-        if (!response.ok) {
-            throw new Error("Failed to fetch location from IP.");
+        try {
+            const response = await fetch(AppConfig.IP_API_ENDPOINT);
+            if (!response.ok) {
+                throw new Error("Failed to fetch location from IP.");
+            }
+            const data = await response.json();
+            const [latitude, longitude] = data.loc.split(",").map(Number);
+            return this.getCityDetail(latitude, longitude);
+        } catch (error) {
+            console.error("Error fetching location from IP:", error);
+            // TODO: show toast
         }
-        const data = await response.json();
-        const [latitude, longitude] = data.loc.split(",").map(Number);
-        return this.getCityDetail(latitude, longitude);
     }
 
     static async getCurrentLocation() {
         const fallback = async (error) => {
-            // TODO: Notify user about updating permission in browser
+            // TODO: Notify user about updating permission in browser with toast
             console.warn(
                 "Geolocation permission denied. Falling back to IP-based location."
             );
@@ -48,29 +53,40 @@ class AppLocation {
         }
     }
     static async getCityDetail(lat, lon) {
-        const response = await fetch(
-            AppConfig.reverseGeoCodingApiEndpoint(lat, lon)
-        );
-        const {
-            name: city,
-            state: region = "",
-            country: country_code,
-            lat: latitude,
-            lon: longitude,
-        } = (await response.json())[0];
-        const res = await fetch(
-            `https://restcountries.com/v3.1/alpha/${country_code}`
-        );
-        const country = (await res.json())[0].name.common;
-        return {
-            city,
-            region,
-            country,
-            country_code,
-            latitude,
-            longitude,
-            time: Date.now(),
-        };
+        try {
+            const response = await fetch(
+                AppConfig.reverseGeoCodingApiEndpoint(lat, lon)
+            );
+            if (!response.ok) {
+                throw new Error("Failed to fetch city details.");
+            }
+            const {
+                name: city,
+                state: region = "",
+                country: country_code,
+                lat: latitude,
+                lon: longitude,
+            } = (await response.json())[0];
+            const res = await fetch(
+                `https://restcountries.com/v3.1/alpha/${country_code}`
+            );
+            if (!res.ok) {
+                throw new Error("Failed to fetch country details.");
+            }
+            const country = (await res.json())[0].name.common;
+            return {
+                city,
+                region,
+                country,
+                country_code,
+                latitude,
+                longitude,
+                time: Date.now(),
+            };
+        } catch(error) {
+            console.error("Error fetching city details:", error);
+            // TODO: show toast
+        }
     }
 }
 
