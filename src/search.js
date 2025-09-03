@@ -1,4 +1,4 @@
-import AppConfig from "./config.js";
+import AppConfig from "./models/config.js";
 
 const dialog = document.querySelector("dialog#search");
 const form = dialog.querySelector("form");
@@ -96,7 +96,6 @@ function openSearch() {
                         throw new Error("API error: " + res.statusText);
                     }
                     const list = (await res.json()).results;
-                    console.log(list);
                     if (!list || !list.length) {
                         result.innerHTML = "<li>No results found</li>";
                         spinner.hidden = true;
@@ -170,26 +169,3 @@ function openSearch() {
 }
 
 export { openSearch };
-
-//Test
-import { getCurrentWeather, getWeatherForcast } from "./weather.js";
-
-const button = document.querySelector("dialog + button");
-button.onclick = async () => {
-    const result = await openSearch();
-    if (result) {
-        console.log("Selected location:", result);
-        const weather = await getCurrentWeather(
-            result.latitude,
-            result.longitude
-        );
-        console.log("Current weather", weather);
-        const forecast = await getWeatherForcast(
-            result.latitude,
-            result.longitude
-        );
-        console.log("Forcast", forecast);
-    } else {
-        console.log("Search canceled");
-    }
-};
