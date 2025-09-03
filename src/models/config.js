@@ -4,15 +4,30 @@ class AppConfig {
 
     static IP_API_ENDPOINT = `https://ipinfo.io/json?token=${this.#IP_API_KEY}`;
 
-    static currentWeatherApiEndpoint(lat, lon, units = "metric") {
-        return `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=${units}&appid=${
-            this.#WEATHER_API_KEY
-        }`;
+    static #units = null; // "metric" or "imperial"
+    static UNITS_KEY = "units";
+
+    static get units() {
+        if (!this.#units) {
+            this.#units = localStorage.getItem(this.UNITS_KEY) ?? "metric";
+        }
+        return this.#units;
     }
-    static forecastWeatherApiEndpoint(lat, lon, units = "metric") {
-        return `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${units}&appid=${
-            this.#WEATHER_API_KEY
-        }`;
+
+    static toggleUnits() {
+        this.#units = this.#units === "metric" ? "imperial" : "metric";
+        localStorage.setItem(this.UNITS_KEY, this.#units);
+    }
+
+    static currentWeatherApiEndpoint(lat, lon) {
+        return `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=${
+            this.#units
+        }&appid=${this.#WEATHER_API_KEY}`;
+    }
+    static forecastWeatherApiEndpoint(lat, lon) {
+        return `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${
+            this.#units
+        }&appid=${this.#WEATHER_API_KEY}`;
     }
     static geocodingApiEndpoint(city, limit = 5) {
         return `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
