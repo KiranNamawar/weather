@@ -3,7 +3,6 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="color-scheme" content="light dark" />
         <title>Weather App</title>
         <meta
             name="description"
@@ -28,8 +27,19 @@
         />
     </head>
     <body>
-        <header>
-            <h1 class="text-center">Weather App</h1>
+        <header class="w-full flex flex-col items-center p-4">
+                <!-- <i class="fa-solid fa-cloud-sun-rain"></i> -->
+                <h1 class="text-4xl">Weather App</h1>
+            <div class="flex flex-col md:flex-row gap-4 mt-4">
+                <button id="open-search" class="border rounded-2xl py-2 px-4 cursor-text">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Search For City
+                </button>
+                <button id="my-location" class="rounded-2xl py-2 px-4">
+                    <i class="fa-solid fa-location-dot"></i>
+                    Use My Location
+                </button>
+            </div>
         </header>
         <main>
             <dialog
@@ -67,7 +77,9 @@
                     ></ul>
                 </form>
             </dialog>
-            <button>Open Modal</button>
+            <section id="current-weather">
+
+            </section>
         </main>
     </body>
 </html>
