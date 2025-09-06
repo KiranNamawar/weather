@@ -36,7 +36,7 @@
                     Search For City
                 </button>
                 <button id="my-location" class="rounded-2xl py-2 px-4">
-                    <i class="fa-solid fa-location-dot"></i>
+                    <i class="fa-solid fa-crosshairs"></i>
                     Use My Location
                 </button>
             </div>
@@ -46,9 +46,9 @@
                 id="search"
                 class="mx-auto my-8 p-4 rounded-xl backdrop:backdrop-blur-sm w-full md:w-3/4 lg:w-1/2"
             >
-                <form method="dialog" class="w-full mx-auto">
+                <form method="dialog" class="w-full mx-auto flex flex-col gap-4">
                     <div class="w-full flex items-center justify-between mb-4">
-                        <h2 class="text-2xl mb-4">Search for a city</h2>
+                        <h2 class="text-2xl">Search for a city</h2>
                         <button id="close-search" type="button" class="">
                             <i class="fa-solid fa-x"></i>
                         </button>
@@ -73,12 +73,16 @@
                     ></ul>
                     <ul
                         id="previous-searches"
-                        class="w-full flex flex-col md:flex-row items-center justify-center flex-wrap"
-                    ></ul>
+                        class="w-full flex items-center justify-center flex-wrap gap-2 border-t-2 border-dashed pt-2"
+                    >
+                </ul>
                 </form>
             </dialog>
-            <section id="current-weather">
-
+            <section id="current-weather" class="md:max-w-3/4 md:mx-auto mx-4 p-4 rounded-xl flex flex-col gap-4">
+                <!-- Current weather will be displayed here -->
+            </section>
+            <section id="forecast" class="md:max-w-3/4 mt-8 md:mx-auto mx-4 p-4 rounded-xl flex flex-col gap-4">
+                <!-- Forecast will be displayed here -->
             </section>
         </main>
     </body>

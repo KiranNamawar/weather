@@ -9,10 +9,11 @@ class AppLocation {
             }
             const data = await response.json();
             const [latitude, longitude] = data.loc.split(",").map(Number);
-            return this.getCityDetail(latitude, longitude);
+            return AppLocation.getCityDetail(latitude, longitude);
         } catch (error) {
             console.error("Error fetching location from IP:", error);
             // TODO: show toast
+            return null;
         }
     }
 
@@ -23,7 +24,7 @@ class AppLocation {
                 "Geolocation permission denied. Falling back to IP-based location."
             );
             if (error) console.error(error);
-            return this.getLocationFromIP();
+            return AppLocation.getLocationFromIP();
         };
 
         try {
@@ -37,7 +38,7 @@ class AppLocation {
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
                         resolve(
-                            await this.getCityDetail(
+                            await AppLocation.getCityDetail(
                                 position.coords.latitude,
                                 position.coords.longitude
                             )
@@ -45,6 +46,10 @@ class AppLocation {
                     },
                     async (error) => {
                         resolve(await fallback(error));
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000
                     }
                 );
             });
@@ -83,9 +88,10 @@ class AppLocation {
                 longitude,
                 time: Date.now(),
             };
-        } catch(error) {
+        } catch (error) {
             console.error("Error fetching city details:", error);
             // TODO: show toast
+            return null;
         }
     }
 }

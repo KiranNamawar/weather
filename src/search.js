@@ -28,6 +28,7 @@ function savePrevSearches(data) {
         return item;
     });
     if (!exists) {
+        if (temp.length >= 5) temp.pop();
         temp.push(data);
     }
     prevSearches = temp.sort((a, b) => b.time - a.time);
@@ -39,13 +40,14 @@ function renderResult(data) {
     data.forEach((item) => {
         const info = encodeURIComponent(JSON.stringify(item));
         const listItem = document.createElement("li");
+        listItem.classList.add("w-full");
         listItem.innerHTML = `
-            <button type="submit" data-info="${info}" class="w-full">
+            <button type="submit" data-info="${info}" class="w-full grid grid-cols-[32px_1fr] gap-x-4 rounded-2xl px-10 py-1 items-center">
                 <img src="https://flagsapi.com/${
                     item.country_code
-                }/flat/32.png">
-                <span class="font-bold">${item.city}</span>
-                <span>${item.region ?? ""}, ${item.country ?? ""}</span>
+                }/flat/32.png" class="row-span-2">
+                <span class="font-bold text-left">${item.city}</span>
+                <span class="text-left">${item.region ?? ""}, ${item.country ?? ""}</span>
             </button>
         `;
         result.appendChild(listItem);
@@ -60,12 +62,11 @@ function renderPrevSearches() {
             const info = encodeURIComponent(JSON.stringify(item));
             const listItem = document.createElement("li");
             listItem.innerHTML = `
-                <button type="submit" data-info="${info}" class="">
+                <button type="submit" data-info="${info}" class="flex border rounded-2xl w-full gap-2 px-4 py-1 items-center">
                     <img src="https://flagsapi.com/${
                         item.country_code
                     }/flat/32.png">
                     <span>${item.city}</span>
-                    <span>${item.region ?? ""}, ${item.country ?? ""}</span>
                 </button>
             `;
             prevList.appendChild(listItem);
