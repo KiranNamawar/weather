@@ -1,0 +1,14 @@
+{
+    "scripts": {
+        "start": "npx serve .",
+        "tw": "npx @tailwindcss/cli -i ./styles/input.css -o ./styles/output.css --watch",
+        "dev": "concurrently -k -n TAILWIND,VITE -c cyan,yellow \"npm run tw\" \"npx vite --port 3000 .\""
+    },
+    "dependencies": {
+        "@tailwindcss/cli": "^4.1.12",
+        "tailwindcss": "^4.1.12"
+    },
+    "devDependencies": {
+        "concurrently": "^9.2.1"
+    }
+}
