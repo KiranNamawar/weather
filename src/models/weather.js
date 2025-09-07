@@ -63,6 +63,11 @@ class AppWeather {
     static getWeatherForecast(lat, lon) {
         return this.#getWeather(lat, lon, "forecast");
     }
+
+    static clearCache() {
+        this.#CURRENT_WEATHER_CACHE.length = 0;
+        this.#FORECAST_WEATHER_CACHE.length = 0;
+    }
 }
 
 export default AppWeather;

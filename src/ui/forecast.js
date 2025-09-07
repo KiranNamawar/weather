@@ -53,7 +53,7 @@ function renderDailyForcast(dataList) {
 
     dailyData.forEach((dataPoint) => {
         const card = document.createElement("div");
-        card.className = " rounded-lg p-4 text-center border-2 border-yellow-500/50 flex flex-col justify-between gap-4";
+        card.className = " rounded-lg p-4 text-center backdrop-blur-md border-yellow-500/50 flex flex-col justify-between gap-4";
 
         const date = new Date(dataPoint.dt * 1000);
         const dayName = date.toLocaleDateString("en-US", { weekday: "long" });

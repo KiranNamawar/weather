@@ -5,12 +5,36 @@ const form = dialog.querySelector("form");
 const input = dialog.querySelector('input[type="search"]');
 const result = dialog.querySelector("ul#search-results");
 
+const recentSelect = document.querySelector("select#recent");
+
 let prevSearches = [];
 const STORAGE_KEY = "previousSearches";
 
 function loadPrevSearches() {
     // load history from local storage
     prevSearches = JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? [];
+    renderRecentSelect();
+}
+
+function renderRecentSelect() {
+    // Clear existing options except the first one (disabled placeholder)
+    while (recentSelect.children.length > 1) {
+        recentSelect.removeChild(recentSelect.lastChild);
+    }
+
+    if (prevSearches.length === 0) {
+        // Hide the select when there are no recent searches
+        recentSelect.style.display = "none";
+    } else {
+        // Show the select and populate with recent searches
+        recentSelect.style.display = "block";
+        prevSearches.forEach((item) => {
+            const option = document.createElement("option");
+            option.value = encodeURIComponent(JSON.stringify(item));
+            option.textContent = `${item.city}, ${item.country}`;
+            recentSelect.appendChild(option);
+        });
+    }
 }
 
 function savePrevSearches(data) {
@@ -33,6 +57,7 @@ function savePrevSearches(data) {
     }
     prevSearches = temp.sort((a, b) => b.time - a.time);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prevSearches));
+    renderRecentSelect();
 }
 
 function renderResult(data) {
@@ -47,7 +72,9 @@ function renderResult(data) {
                     item.country_code
                 }/flat/32.png" class="row-span-2">
                 <span class="font-bold text-left">${item.city}</span>
-                <span class="text-left">${item.region ?? ""}, ${item.country ?? ""}</span>
+                <span class="text-left">${item.region ?? ""}, ${
+            item.country ?? ""
+        }</span>
             </button>
         `;
         result.appendChild(listItem);
@@ -63,9 +90,7 @@ function renderPrevSearches() {
             const listItem = document.createElement("li");
             listItem.innerHTML = `
                 <button type="submit" data-info="${info}" class="flex border rounded-2xl w-full gap-2 px-4 py-1 items-center">
-                    <img src="https://flagsapi.com/${
-                        item.country_code
-                    }/flat/32.png">
+                    <img src="https://flagsapi.com/${item.country_code}/flat/32.png">
                     <span>${item.city}</span>
                 </button>
             `;
@@ -170,4 +195,25 @@ function openSearch() {
     });
 }
 
-export { openSearch };
+function setupRecentSelectHandler(onLocationSelect) {
+    recentSelect.addEventListener("change", (evt) => {
+        const selectedValue = evt.target.value;
+        if (selectedValue) {
+            const locationData = JSON.parse(decodeURIComponent(selectedValue));
+            const data = { ...locationData, time: Date.now() };
+            savePrevSearches(data);
+
+            // Reset the select to the placeholder
+            evt.target.value = "";
+
+            // Call the callback with the selected location
+            onLocationSelect(data);
+        }
+    });
+}
+
+function initializeRecentSelect() {
+    loadPrevSearches();
+}
+
+export { openSearch, setupRecentSelectHandler, initializeRecentSelect };

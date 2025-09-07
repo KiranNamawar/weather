@@ -8,6 +8,7 @@ class AppConfig {
 
     static #units = null; // "metric" or "imperial"
     static UNITS_KEY = "units";
+    static CURRENT_LOCATION_KEY = "currentLocation";
 
     static get units() {
         if (!this.#units) {
@@ -16,9 +17,26 @@ class AppConfig {
         return this.#units;
     }
 
+    static setUnits(units) {
+        this.#units = units;
+        localStorage.setItem(this.UNITS_KEY, units);
+    }
+
     static toggleUnits() {
         this.#units = this.#units === "metric" ? "imperial" : "metric";
         localStorage.setItem(this.UNITS_KEY, this.#units);
+    }
+
+    static setCurrentLocation(locationData) {
+        localStorage.setItem(
+            this.CURRENT_LOCATION_KEY,
+            JSON.stringify(locationData)
+        );
+    }
+
+    static getCurrentLocation() {
+        const data = localStorage.getItem(this.CURRENT_LOCATION_KEY);
+        return data ? JSON.parse(data) : null;
     }
 
     static currentWeatherApiEndpoint(lat, lon) {
