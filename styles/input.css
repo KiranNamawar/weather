@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+@theme {
+    --font-sans: "Nunito", sans-serif;
+    --color-primary: hsl(200, 0%, 70%);
+    --color-background: blanchedalmond;
+}
+
+@theme inline {
+    --color-surface: hsl(from var(--color-primary) h s l / 0.5);
+}
+
+@layer base {
+    body {
+        @apply font-sans;
+    }
+    button {
+        @apply cursor-pointer;
+    }
+}
+
+@layer components {
+}
+
+@layer utilities {
+    #toggle-units .active {
+        @apply bg-primary;
+    }
+}

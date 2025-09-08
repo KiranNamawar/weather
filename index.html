@@ -1,12 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App</title>
-    <link href="./styles/output.css" rel="stylesheet">
-</head>
-<body>
-    
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Weather App</title>
+        <link rel="icon" type="image/x-icon" href="./images/favicon.ico" />
+        <link href="./styles/output.css" rel="stylesheet" />
+        <script src="./modules/app.js" type="module"></script>
+
+        <!--Links for Font-->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+            rel="stylesheet"
+        />
+
+        <link
+            rel="stylesheet"
+            href="https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-chubby/css/uicons-regular-chubby.css"
+        />
+    </head>
+    <body class="bg-background">
+        <header class="flex flex-col items-center gap-4 p-4">
+            <div
+                class="rounded-full overflow-hidden w-20 border-background border-2 shadow-md"
+            >
+                <img src="./images/logo.png" alt="logo" />
+            </div>
+            <h1
+                class="text-5xl font-semibold text-shadow-md text-shadow-primary"
+            >
+                Weather App
+            </h1>
+            <p class="text-center">
+                Get the current and forecast weather information for any city
+                around the world!
+            </p>
+        </header>
+        <main>
+            <dialog
+                id="search-dialog"
+                class="p-4 rounded-lg shadow-lg m-4 w-full md:mx-auto md:w-1/2 bg-surface backdrop-blur-sm backdrop:backdrop-blur-sm backdrop:backdrop-brightness-50 backdrop:backdrop-contrast-50"
+            >
+                <form method="dialog" class="flex flex-col gap-4 w-full">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl">Search City</h2>
+                        <button type="button" class="pt-1 px-2">
+                            <i class="fi fi-rc-cross"></i>
+                        </button>
+                    </div>
+                    <div
+                        class="flex justify-between items-center border-b-2 focus-within:border-accent p-2"
+                    >
+                        <input
+                            type="search"
+                            placeholder="Enter city name"
+                            class="border-none outline-none flex-1 mr-2"
+                        />
+                        <span id="loading" class="hidden">
+                            <div
+                                class="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
+                            ></div>
+                        </span>
+                    </div>
+                    <div id="search-results"></div>
+                </form>
+            </dialog>
+            <section
+                id="actions"
+                class="flex flex-row flex-wrap justify-evenly items-center gap-4 p-4"
+            >
+                <button
+                    id="my-location"
+                    class="pt-1 px-2 md:py-2 md:px-4 rounded-lg border-primary border-2 bg-primary shadow-md"
+                >
+                    <span class="align-middle">
+                        <i class="fi fi-rc-location-crosshairs"></i>
+                    </span>
+                    <span class="hidden md:inline"> Use My Location </span>
+                </button>
+                <button
+                    id="search-city"
+                    class="border-b-2 px-2 py-1 md:px-4 cursor-text"
+                >
+                    <span class="align-middle md:mr-2">
+                        <i class="fi fi-rc-search"></i>
+                    </span>
+                    <span class="">Search Cities</span>
+                </button>
+                <button
+                    id="toggle-units"
+                    class="border-2 border-primary rounded-lg overflow-hidden flex gap-0"
+                >
+                    <span class="active inline-block py-1 px-2 md:py-2 md:px-4"
+                        >&deg;C</span
+                    >
+                    <span class="inline-block py-1 px-2 md:py-2 md:px-4"
+                        >&deg;F</span
+                    >
+                </button>
+                <!--Custom Recent Cities Select-->
+                <div id="recent-cities" class="hidden">
+                    <button class="px-2 py-2 md:px-4 rounded-lg border-2">
+                        <span> Recent Cities </span>
+                        <span class="align-middle ml-1">
+                            <i class="fi fi-rc-down-to-line"></i>
+                        </span>
+                    </button>
+                    <ul class="absolute mt-2 rounded-lg shadow-lg p-2 hidden">
+                        <!-- Recent cities will be populated here -->
+                    </ul>
+                </div>
+            </section>
+            <section id="current-weather">
+                <!-- Current Weather Data will be displayed here -->
+            </section>
+            <section id="forecast-weather">
+                <!-- Forecast Weather Data will be displayed here -->
+            </section>
+        </main>
+        <footer
+            class="flex flex-col md:flex-row justify-evenly gap-2 items-center flex-wrap mx-4"
+        >
+            <div class="flex items-center rounded-lg">
+                <img
+                    src="./images/OpenWeatherLogo.png"
+                    alt="OpenWeatherMap"
+                    class="w-32"
+                />
+                <p class="p-2">
+                    Weather Data provided by<br />
+                    <a
+                        href="https://openweathermap.org/"
+                        target="_blank"
+                        class="underline text-blue-500"
+                    >
+                        OpenWeather
+                    </a>
+                </p>
+            </div>
+
+            <a
+                href="https://github.com/KiranNamawar/weather"
+                target="_blank"
+                class="bg-primary py-2 px-4 rounded-lg"
+            >
+                <img
+                    src="./images/github.svg"
+                    alt="GitHub"
+                    class="w-6 inline"
+                />
+                <p class="inline align-middle">Source Code</p>
+            </a>
+        </footer>
+    </body>
 </html>
