@@ -35,13 +35,14 @@ function renderResult(data) {
     resultsContainer.appendChild(list);
 }
 
-let timer;
+let timer; // Debounce timer to prevent excessive API calls
 function handleInput() {
-    clearTimeout(timer);
+    clearTimeout(timer); // Clear previous timer
     resultsContainer.innerHTML = "";
 
     const value = input.value.trim();
     if (value.length < 2) {
+        // Minimum characters for meaningful search
         resultsContainer.innerHTML =
             "<p>Please enter at least 2 characters</p>";
         loading.classList.add("hidden");
@@ -49,6 +50,7 @@ function handleInput() {
     }
 
     loading.classList.remove("hidden");
+    // Debounce search by 300ms to avoid excessive API calls while typing
     timer = setTimeout(async () => {
         const results = await searchForCity(value);
         renderResult(results);
@@ -62,13 +64,14 @@ function getLocationFromCity() {
         form.addEventListener(
             "submit",
             (evt) => {
-                const button = evt.submitter;
+                const button = evt.submitter; // Get the specific button that triggered submit
+                // Decode the location data from the button's dataset
                 const info = JSON.parse(
                     decodeURIComponent(button.dataset.info)
                 );
                 resolve(info);
             },
-            { once: true }
+            { once: true } // Remove listener after first use
         );
 
         form.querySelector("#close-search").addEventListener(
@@ -77,6 +80,7 @@ function getLocationFromCity() {
             { once: true }
         );
 
+        // Prevent form submission on Enter key to avoid premature selection
         function preventEnter(evt) {
             if (evt.key === "Enter") {
                 evt.preventDefault();
@@ -86,6 +90,7 @@ function getLocationFromCity() {
 
         input.addEventListener("keydown", preventEnter);
 
+        // Clean up event listeners and reset state when dialog closes
         dialog.addEventListener(
             "close",
             () => {
@@ -94,14 +99,14 @@ function getLocationFromCity() {
                 form.reset();
                 resultsContainer.innerHTML = "";
                 loading.classList.add("hidden");
-                clearTimeout(timer);
-                resolve(null);
+                clearTimeout(timer); // Clear any pending debounced search
+                resolve(null); // Resolve with null if dialog was closed without selection
             },
             { once: true }
         );
 
-        dialog.showModal();
-        input.focus();
+        dialog.showModal(); // Open the modal dialog
+        input.focus(); // Focus input for immediate typing
     });
 }
 

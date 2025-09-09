@@ -20,15 +20,18 @@ function reverseGeoCodingApiEndpoint(lat, lon, limit = 5) {
 const CURRENT_WEATHER_CACHE = []; // 10min
 
 async function getCurrentWeather(lat, lon) {
-    const DURATION = 1000 * 60 * 10; // 10min
+    const DURATION = 1000 * 60 * 10; // 10min cache duration
+    // Search for cached data with matching coordinates and units
     const index = CURRENT_WEATHER_CACHE.findIndex(
         (item) =>
             item.units === units &&
+            // Round coordinates to 4 decimal places for comparison (avoids floating point precision issues)
             Math.round(item.coord.lat * 10000) ===
                 Math.round(Number(lat) * 10000) &&
             Math.round(item.coord.lon * 10000) ===
                 Math.round(Number(lon) * 10000)
     );
+    // Return cached data if found and still valid (within 10 minutes)
     if (
         index !== -1 &&
         CURRENT_WEATHER_CACHE[index].time + DURATION > Date.now()
@@ -41,12 +44,14 @@ async function getCurrentWeather(lat, lon) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        // Add metadata to cached data: units, timestamp for cache validation
         const newData = {
             ...data,
             units,
             time: Date.now(),
         };
 
+        // Update existing cache entry or add new one
         if (index !== -1) {
             CURRENT_WEATHER_CACHE[index] = newData;
         } else {
@@ -64,15 +69,18 @@ async function getCurrentWeather(lat, lon) {
 const FORECAST_WEATHER_CACHE = []; // 3hr
 
 async function getForecastWeather(lat, lon) {
-    const DURATION = 1000 * 60 * 60 * 3; // 3hr
+    const DURATION = 1000 * 60 * 60 * 3; // 3hr cache duration
+    // Find cached forecast data for the same location and units
     const index = FORECAST_WEATHER_CACHE.findIndex(
         (item) =>
             item.units === units &&
+            // Round coordinates to 4 decimal places for precise comparison
             Math.round(item.city.coord.lat * 10000) ===
                 Math.round(Number(lat) * 10000) &&
             Math.round(item.city.coord.lon * 10000) ===
                 Math.round(Number(lon) * 10000)
     );
+    // Return cached forecast if found and still valid (within 3 hours)
     if (
         index !== -1 &&
         FORECAST_WEATHER_CACHE[index].time + DURATION > Date.now()
@@ -85,11 +93,13 @@ async function getForecastWeather(lat, lon) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        // Add metadata for cache management: units and timestamp
         const newData = {
             ...data,
             units,
             time: Date.now(),
         };
+        // Update existing cache entry or create new one
         if (index !== -1) {
             FORECAST_WEATHER_CACHE[index] = newData;
         } else {
@@ -113,5 +123,5 @@ export {
     getForecastWeather,
     reverseGeoCodingApiEndpoint,
     toggleUnits,
-    units
+    units,
 };

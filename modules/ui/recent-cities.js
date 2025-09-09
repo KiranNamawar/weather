@@ -10,7 +10,7 @@ function getRecentCities() {
 function addRecentCity(city) {
     const cities = getRecentCities();
 
-    // Check if city already exists
+    // Check if city already exists using coordinates or city/country match
     const exists = cities.some(
         (existingCity) =>
             (existingCity.latitude === city.latitude &&
@@ -20,16 +20,17 @@ function addRecentCity(city) {
     );
 
     if (!exists) {
-        cities.unshift(city); // Add to beginning of array
+        cities.unshift(city); // Add new city to beginning of array
 
+        // Maintain maximum of 5 recent cities
         if (cities.length > 5) {
-            cities.pop();
+            cities.pop(); // Remove oldest city
         }
 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(cities));
         renderOptions(); // Re-render the options when a new city is added
     } else {
-        // Move the existing city to the top
+        // Move the existing city to the top (most recent)
         const updatedCities = cities.filter(
             (existingCity) =>
                 !(
@@ -39,7 +40,7 @@ function addRecentCity(city) {
                         existingCity.country === city.country)
                 )
         );
-        updatedCities.unshift(city);
+        updatedCities.unshift(city); // Add to front
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedCities));
         renderOptions(); // Re-render the options when a city is moved to top
     }
@@ -69,15 +70,16 @@ function renderOptions() {
 function setupRecentCitiesHandler() {
     recentCitiesSelect.addEventListener("change", (event) => {
         if (event.target.value) {
+            // Parse the selected city data from JSON string
             const selectedCity = JSON.parse(event.target.value);
 
-            // Dispatch custom event
+            // Dispatch custom event for loose coupling between components
             const customEvent = new CustomEvent("citySelected", {
                 detail: selectedCity,
             });
             document.dispatchEvent(customEvent);
 
-            // Reset the select to the default option
+            // Reset the select to the default option for better UX
             recentCitiesSelect.selectedIndex = 0;
         }
     });

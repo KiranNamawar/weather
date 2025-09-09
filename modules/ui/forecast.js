@@ -31,15 +31,17 @@ function renderHourlyForecast(list) {
 }
 
 function renderDailyForecast(list) {
-    const dailyData = {};
+    const dailyData = {}; // Object to store aggregated daily weather data
 
+    // Process hourly data and group by date
     list.forEach((item) => {
-        const date = new Date(item.dt * 1000);
+        const date = new Date(item.dt * 1000); // Convert Unix timestamp to Date
         const day = date.toLocaleDateString([], {
             weekday: "short",
             month: "short",
             day: "numeric",
         });
+        // Use first occurrence of each day to represent daily forecast
         if (!dailyData[day]) {
             dailyData[day] = {
                 temp: Math.round(item.main.temp),
@@ -50,7 +52,7 @@ function renderDailyForecast(list) {
                 humidity: item.main.humidity,
                 pressure: item.main.pressure,
                 windSpeed: Math.round(item.wind.speed),
-                visibility: item.visibility
+                visibility: item.visibility,
             };
         }
     });
@@ -58,6 +60,7 @@ function renderDailyForecast(list) {
     const ul = document.createElement("ul");
     ul.className =
         "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-center items-center gap-4";
+    // Create forecast cards for each day
     for (const [day, data] of Object.entries(dailyData)) {
         const li = document.createElement("li");
         li.innerHTML = `
@@ -104,7 +107,9 @@ function renderDailyForecast(list) {
                     </div>
                     <div class="bg-white/20 p-2 rounded">
                         <span class="text-yellow-500"><i class="fi fi-rc-eyes"></i></span>
-                        <p class="font-medium">${(data.visibility / 1000).toFixed(1)} km</p>
+                        <p class="font-medium">${(
+                            data.visibility / 1000
+                        ).toFixed(1)} km</p>
                         <p class="text-xs text-gray-600">Visibility</p>
                     </div>
                 </div>

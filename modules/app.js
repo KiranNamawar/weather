@@ -22,14 +22,16 @@ window.addEventListener("DOMContentLoaded", async () => {
     showLoading("current-weather");
     showLoading("forecast-weather");
 
-    // Initial data fetch based on geolocation permission
+    // Check geolocation permission and fetch initial data accordingly
     const permission = await navigator.permissions.query({
         name: "geolocation",
     });
     if (permission.state === "granted") {
+        // User has granted geolocation permission - use GPS location
         const location = await getCurrentLocation();
         await updateWeather(location);
     } else {
+        // Fall back to IP-based location detection
         const location = await getLocationByIP();
         await updateWeather(location);
     }
@@ -75,27 +77,30 @@ window.addEventListener("DOMContentLoaded", async () => {
     document
         .getElementById("toggle-units")
         .addEventListener("click", async () => {
-            if (!currentLocation) return;
-            toggleUnits();
+            if (!currentLocation) return; // Prevent action if no location set
+            toggleUnits(); // Switch between metric and imperial
+            // Update UI to reflect current unit selection
             document.querySelectorAll("#toggle-units span").forEach((span) => {
                 span.classList.toggle("active");
             });
+            // Fetch and render data with new units
             const data = await getData(currentLocation);
             render(data);
         });
 
     // Handle recent cities selection using custom event
     document.addEventListener("citySelected", async (event) => {
-        const selectedCity = event.detail;
+        const selectedCity = event.detail; // Extract city data from custom event
         await updateWeather(selectedCity);
     });
 });
 
 async function getData(location) {
-    // Show loading indicators
+    // Show loading indicators while fetching data
     showLoading("current-weather");
     showLoading("forecast-weather");
 
+    // Fetch current weather and forecast data in parallel
     const current = await getCurrentWeather(
         location.latitude,
         location.longitude
@@ -108,6 +113,7 @@ async function getData(location) {
 }
 
 function render(data) {
+    // Render both current weather and forecast sections
     renderCurrentWeather(data);
     renderForecastWeather(data);
 }
@@ -117,10 +123,11 @@ async function updateWeather(location) {
         toast.error("No location provided.");
         return;
     }
-    currentLocation = location;
-    addRecentCity(location);
+    currentLocation = location; // Store current location for unit toggling
+    addRecentCity(location); // Add to recent cities list
     const data = await getData(location);
     if (data) {
+        // Determine if it's day or night from weather icon for background
         const isDay = data.current.weather[0].icon.includes("d");
         setBackground(data.current.weather[0].main, isDay);
         render(data);

@@ -36,6 +36,7 @@ async function getLocationByIP() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        // Parse location string "lat,lon" into separate numeric coordinates
         const [lat, lon] = data.loc.split(",").map(Number);
 
         return {
@@ -43,7 +44,7 @@ async function getLocationByIP() {
             longitude: lon,
             city: data.city,
             state: data.region,
-            country: await getCountryName(data.country),
+            country: await getCountryName(data.country), // Convert country code to full name
             country_code: data.country,
         };
     } catch (error) {
@@ -54,6 +55,7 @@ async function getLocationByIP() {
 
 async function getCurrentLocation() {
     try {
+        // Wrap geolocation API in Promise for async/await compatibility
         const location = await new Promise((resolve) => {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -61,51 +63,57 @@ async function getCurrentLocation() {
                     resolve({ latitude, longitude });
                 },
                 (error) => {
-                    resolve(null);
+                    resolve(null); // Resolve with null instead of rejecting
                 },
                 {
-                    enableHighAccuracy: true,
-                    timeout: 5000,
-                    maximumAge: 0,
+                    enableHighAccuracy: true, // Use GPS if available
+                    timeout: 5000, // 5 second timeout
+                    maximumAge: 0, // Don't use cached position
                 }
             );
         });
 
         if (location) {
+            // Reverse geocode coordinates to get human-readable location
             const response = await fetch(
                 reverseGeoCodingApiEndpoint(
                     location.latitude,
                     location.longitude,
-                    1
+                    1 // Only need 1 result
                 )
             );
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const data = (await response.json())[0];
+            const data = (await response.json())[0]; // Take first result
             return {
                 latitude: location.latitude,
                 longitude: location.longitude,
                 city: data.name,
                 state: data.state,
-                country: await getCountryName(data.country),
+                country: await getCountryName(data.country), // Convert code to full name
                 country_code: data.country,
             };
         } else {
-            toast.error("Error fetching current location. Using IP location instead.");
+            // Fallback to IP-based location if geolocation fails
+            toast.error(
+                "Error fetching current location. Using IP location instead."
+            );
             return await getLocationByIP();
         }
     } catch (error) {
-        toast.error("Error fetching current location, try searching for a city.");
+        toast.error(
+            "Error fetching current location, try searching for a city."
+        );
         return null;
     }
 }
 
-const GEOCODING_API_CACHE = {};
+const GEOCODING_API_CACHE = {}; // Cache search results to avoid repeated API calls
 async function searchForCity(city) {
-    const searchTerm = city.toLowerCase().trim();
+    const searchTerm = city.toLowerCase().trim(); // Normalize search term
 
-    // Check if result is already cached
+    // Check if result is already cached to reduce API calls
     if (GEOCODING_API_CACHE[searchTerm]) {
         return GEOCODING_API_CACHE[searchTerm];
     }
@@ -119,6 +127,7 @@ async function searchForCity(city) {
         if (!data.results) {
             return [];
         }
+        // Transform API response to standardized location format
         const results = data.results.map((item) => ({
             latitude: item.latitude,
             longitude: item.longitude,
@@ -128,7 +137,7 @@ async function searchForCity(city) {
             country_code: item.country_code,
         }));
 
-        // Cache the results
+        // Cache the results for future searches
         GEOCODING_API_CACHE[searchTerm] = results;
         return results;
     } catch (error) {
