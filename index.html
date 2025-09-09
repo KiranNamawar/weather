@@ -46,16 +46,17 @@
                 <form method="dialog" class="flex flex-col gap-4 w-full">
                     <div class="flex justify-between items-center">
                         <h2 class="text-2xl">Search City</h2>
-                        <button type="button" class="pt-1 px-2">
+                        <button id="close-search" type="button" class="pt-1 px-2">
                             <i class="fi fi-rc-cross"></i>
                         </button>
                     </div>
                     <div
-                        class="flex justify-between items-center border-b-2 focus-within:border-accent p-2"
+                        class="flex justify-between items-center border-b-2 p-2"
                     >
                         <input
                             type="search"
                             placeholder="Enter city name"
+                            name="city"
                             class="border-none outline-none flex-1 mr-2"
                         />
                         <span id="loading" class="hidden">
@@ -100,18 +101,11 @@
                         >&deg;F</span
                     >
                 </button>
-                <!--Custom Recent Cities Select-->
-                <div id="recent-cities" class="hidden">
-                    <button class="px-2 py-2 md:px-4 rounded-lg border-2">
-                        <span> Recent Cities </span>
-                        <span class="align-middle ml-1">
-                            <i class="fi fi-rc-down-to-line"></i>
-                        </span>
-                    </button>
-                    <ul class="absolute mt-2 rounded-lg shadow-lg p-2 hidden">
-                        <!-- Recent cities will be populated here -->
-                    </ul>
-                </div>
+                <select id="recent-cities" class="p-2 rounded-lg">
+                    <option value="" disabled selected>
+                        Recent Cities
+                    </option>
+                </select>
             </section>
             <section id="current-weather">
                 <!-- Current Weather Data will be displayed here -->
