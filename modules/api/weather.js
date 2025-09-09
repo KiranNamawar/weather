@@ -111,4 +111,5 @@ export {
     getForecastWeather,
     reverseGeoCodingApiEndpoint,
     toggleUnits,
+    units
 };
