@@ -288,6 +288,9 @@
   .mb-3 {
     margin-bottom: calc(var(--spacing) * 3);
   }
+  .mb-4 {
+    margin-bottom: calc(var(--spacing) * 4);
+  }
   .mb-6 {
     margin-bottom: calc(var(--spacing) * 6);
   }
@@ -575,6 +578,15 @@
   }
   .bg-surface {
     background-color: hsl(from var(--color-primary) h s l / 0.5);
+  }
+  .bg-white {
+    background-color: var(--color-white);
+  }
+  .bg-white\/20 {
+    background-color: color-mix(in srgb, #fff 20%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-white) 20%, transparent);
+    }
   }
   .bg-yellow-100 {
     background-color: var(--color-yellow-100);

@@ -1,4 +1,5 @@
 import { getWeatherIcon } from "../icon.js";
+import { units } from "../api/weather.js";
 
 const section = document.getElementById("forecast-weather");
 
@@ -46,6 +47,10 @@ function renderDailyForecast(list) {
                 description: item.weather[0].description,
                 tempMin: Math.round(item.main.temp_min),
                 tempMax: Math.round(item.main.temp_max),
+                humidity: item.main.humidity,
+                pressure: item.main.pressure,
+                windSpeed: Math.round(item.wind.speed),
+                visibility: item.visibility
             };
         }
     });
@@ -56,19 +61,51 @@ function renderDailyForecast(list) {
     for (const [day, data] of Object.entries(dailyData)) {
         const li = document.createElement("li");
         li.innerHTML = `
-            <div class="bg-primary/50 p-4 grid grid-cols-2 gap-4 rounded-lg text-center">
-                <p class="text-lg font-medium col-span-2">${day}</p>
-                <div class="flex-flex-col">
-                    <span class="text-5xl">${data.icon}</span>
-                    <p class="text-sm text-gray-700 mb-3 capitalize">${data.description}</p>
+            <div class="bg-primary/50 p-4 rounded-lg">
+                <p class="text-lg font-medium text-center mb-4">${day}</p>
+                
+                <!-- Main weather info -->
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="flex flex-col items-center">
+                        <span class="text-5xl">${data.icon}</span>
+                        <p class="text-sm text-gray-700 capitalize text-center">${
+                            data.description
+                        }</p>
+                    </div>
+                    <div class="flex flex-col justify-center items-center gap-2">
+                        <p class="text-2xl font-bold">${data.temp}&deg;</p>
+                        <div>
+                            <span class="text-red-500"><i class="fi fi-rc-arrow-trend-up"></i></span>
+                            <span>${data.tempMax}°</span>
+                            <span class="text-blue-500 ml-2"><i class="fi fi-rc-arrow-trend-down"></i></span>
+                            <span>${data.tempMin}°</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex flex-col justify-center items-center gap-2">
-                    <p class="text-2xl font-bold">${data.temp}&deg;</p>
-                    <div>
-                        <span class="text-red-500"><i class="fi fi-rc-arrow-trend-up"></i></span>
-                        <span>${data.tempMax}°</span>
-                        <span class="text-blue-500 ml-2"><i class="fi fi-rc-arrow-trend-down"></i></span>
-                        <span>${data.tempMin}°</span>
+                
+                <!-- Additional weather data -->
+                <div class="grid grid-cols-2 gap-2 text-center text-sm">
+                    <div class="bg-white/20 p-2 rounded">
+                        <span class="text-blue-500"><i class="fi fi-rc-humidity"></i></span>
+                        <p class="font-medium">${data.humidity}%</p>
+                        <p class="text-xs text-gray-600">Humidity</p>
+                    </div>
+                    <div class="bg-white/20 p-2 rounded">
+                        <span class="text-green-500"><i class="fi fi-rc-wind"></i></span>
+                        <p class="font-medium">${data.windSpeed} ${
+            units === "metric" ? "m/s" : "mph"
+        }</p>
+                        <p class="text-xs text-gray-600">Wind</p>
+                    </div>
+                    <div class="bg-white/20 p-2 rounded">
+                        <span class="text-blue-500"><i class="fi fi-rc-water-lower"></i></span>
+                        <p class="font-medium">${data.pressure} hPa</p>
+                        <p class="text-xs text-gray-600">Pressure</p>
+                    </div>
+                    <div class="bg-white/20 p-2 rounded">
+                        <span class="text-yellow-500"><i class="fi fi-rc-eyes"></i></span>
+                        <p class="font-medium">${(data.visibility / 1000).toFixed(1)} km</p>
+                        <p class="text-xs text-gray-600">Visibility</p>
                     </div>
                 </div>
             </div>
