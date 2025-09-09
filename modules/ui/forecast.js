@@ -1,4 +1,4 @@
-import { getWeatherIcon } from "../icon.js";
+import { getWeatherIcon } from "./icon.js";
 import { units } from "../api/weather.js";
 
 const section = document.getElementById("forecast-weather");
