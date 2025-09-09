@@ -3,10 +3,233 @@ import { units } from "../api/weather.js";
 
 const section = document.getElementById("current-weather");
 
+function generateWeatherAlerts(current, units) {
+    const alerts = [];
+    const temp = current.main.temp;
+    const feelsLike = current.main.feels_like;
+    const humidity = current.main.humidity;
+    const windSpeed = current.wind.speed;
+    const visibility = current.visibility / 1000; // Convert to km
+    const weatherMain = current.weather[0].main.toLowerCase();
+
+    // Temperature alerts
+    if (units === "metric") {
+        if (temp >= 40) {
+            alerts.push({
+                type: "danger",
+                icon: "fi fi-rc-temperature-high",
+                message: `Extreme Heat Warning: ${Math.round(
+                    temp
+                )}°C - Stay hydrated and avoid prolonged sun exposure`,
+            });
+        } else if (temp >= 35) {
+            alerts.push({
+                type: "warning",
+                icon: "fi fi-rc-temperature-high",
+                message: `High Temperature Alert: ${Math.round(
+                    temp
+                )}°C - Take precautions when outdoors`,
+            });
+        } else if (temp <= -10) {
+            alerts.push({
+                type: "danger",
+                icon: "fi fi-rc-temperature-low",
+                message: `Extreme Cold Warning: ${Math.round(
+                    temp
+                )}°C - Risk of frostbite, dress warmly`,
+            });
+        } else if (temp <= 0) {
+            alerts.push({
+                type: "warning",
+                icon: "fi fi-rc-temperature-low",
+                message: `Freezing Temperature: ${Math.round(
+                    temp
+                )}°C - Watch for icy conditions`,
+            });
+        }
+
+        // Wind speed alerts (m/s)
+        if (windSpeed >= 20) {
+            alerts.push({
+                type: "danger",
+                icon: "fi fi-rc-wind",
+                message: `Severe Wind Warning: ${Math.round(
+                    windSpeed
+                )} m/s - Dangerous conditions, stay indoors`,
+            });
+        } else if (windSpeed >= 10) {
+            alerts.push({
+                type: "warning",
+                icon: "fi fi-rc-wind",
+                message: `High Wind Advisory: ${Math.round(
+                    windSpeed
+                )} m/s - Be cautious outdoors`,
+            });
+        }
+    } else {
+        // Imperial units
+        if (temp >= 104) {
+            // 40°C
+            alerts.push({
+                type: "danger",
+                icon: "fi fi-rc-temperature-high",
+                message: `Extreme Heat Warning: ${Math.round(
+                    temp
+                )}°F - Stay hydrated and avoid prolonged sun exposure`,
+            });
+        } else if (temp >= 95) {
+            // 35°C
+            alerts.push({
+                type: "warning",
+                icon: "fi fi-rc-temperature-high",
+                message: `High Temperature Alert: ${Math.round(
+                    temp
+                )}°F - Take precautions when outdoors`,
+            });
+        } else if (temp <= 14) {
+            // -10°C
+            alerts.push({
+                type: "danger",
+                icon: "fi fi-rc-temperature-low",
+                message: `Extreme Cold Warning: ${Math.round(
+                    temp
+                )}°F - Risk of frostbite, dress warmly`,
+            });
+        } else if (temp <= 32) {
+            // 0°C
+            alerts.push({
+                type: "warning",
+                icon: "fi fi-rc-temperature-low",
+                message: `Freezing Temperature: ${Math.round(
+                    temp
+                )}°F - Watch for icy conditions`,
+            });
+        }
+
+        // Wind speed alerts (mph)
+        if (windSpeed >= 45) {
+            // ~20 m/s
+            alerts.push({
+                type: "danger",
+                icon: "fi fi-rc-wind",
+                message: `Severe Wind Warning: ${Math.round(
+                    windSpeed
+                )} mph - Dangerous conditions, stay indoors`,
+            });
+        } else if (windSpeed >= 22) {
+            // ~10 m/s
+            alerts.push({
+                type: "warning",
+                icon: "fi fi-rc-wind",
+                message: `High Wind Advisory: ${Math.round(
+                    windSpeed
+                )} mph - Be cautious outdoors`,
+            });
+        }
+    }
+
+    // Humidity alerts
+    if (humidity >= 85) {
+        alerts.push({
+            type: "info",
+            icon: "fi fi-rc-humidity",
+            message: `High Humidity: ${humidity}% - May feel uncomfortable, stay cool`,
+        });
+    } else if (humidity <= 20) {
+        alerts.push({
+            type: "info",
+            icon: "fi fi-rc-humidity",
+            message: `Low Humidity: ${humidity}% - Stay hydrated, use moisturizer`,
+        });
+    }
+
+    // Visibility alerts
+    if (visibility <= 1) {
+        alerts.push({
+            type: "warning",
+            icon: "fi fi-rc-eyes",
+            message: `Poor Visibility: ${visibility.toFixed(
+                1
+            )} km - Drive carefully, use headlights`,
+        });
+    }
+
+    // Weather condition alerts
+    if (weatherMain.includes("thunder")) {
+        alerts.push({
+            type: "warning",
+            icon: "fi fi-rc-bolt",
+            message:
+                "Thunderstorm Alert - Seek shelter, avoid outdoor activities",
+        });
+    } else if (weatherMain.includes("snow")) {
+        alerts.push({
+            type: "info",
+            icon: "fi fi-rc-snowflake",
+            message:
+                "Snow Conditions - Drive carefully, wear appropriate footwear",
+        });
+    } else if (weatherMain.includes("rain")) {
+        alerts.push({
+            type: "info",
+            icon: "fi fi-rc-raindrops",
+            message: "Rainy Weather - Carry an umbrella, drive with caution",
+        });
+    }
+
+    return alerts;
+}
+
+function renderWeatherAlerts(alerts) {
+    if (alerts.length === 0) return "";
+
+    const alertsHtml = alerts
+        .map((alert) => {
+            const alertColors = {
+                danger: "bg-red-100 border-red-500 text-red-800",
+                warning: "bg-yellow-100 border-yellow-500 text-yellow-800",
+                info: "bg-blue-100 border-blue-500 text-blue-800",
+            };
+
+            const iconColors = {
+                danger: "text-red-600",
+                warning: "text-yellow-600",
+                info: "text-blue-600",
+            };
+
+            return `
+            <div class="flex items-start gap-3 p-3 rounded-lg border-l-4 ${
+                alertColors[alert.type]
+            } mb-2">
+                <span class="${iconColors[alert.type]} text-xl"><i class="${
+                alert.icon
+            }"></i></span>
+                <p class="text-sm font-medium">${alert.message}</p>
+            </div>
+        `;
+        })
+        .join("");
+
+    return `
+        <div class="mb-6">
+            <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
+                <span class="text-orange-500"><i class="fi fi-rc-triangle-warning"></i></span>
+                Weather Alerts
+            </h3>
+            ${alertsHtml}
+        </div>
+    `;
+}
+
 function renderCurrentWeather(data) {
     const { location, current } = data;
-    console.log("Rendering current weather for:", location, current);
+
+    // Generate weather alerts
+    const alerts = generateWeatherAlerts(current, units);
+    const alertsHtml = renderWeatherAlerts(alerts);
+
     section.innerHTML = `
+        ${alertsHtml}
         <div class="flex justify-between items-center">
             <div>
                 <h2 class="text-2xl md:text-4xl font-bold">${location.city}</h2>

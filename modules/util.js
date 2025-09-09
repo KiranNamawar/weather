@@ -3,7 +3,10 @@ function getWeatherIcon(weather) {
     if (code >= 200 && code < 300) {
         return "⛈️"; // Thunderstorm
     } else if (code >= 300 && code < 500) {
-        return "🌦️"; // Drizzle
+        if (weather.icon.endsWith("d")) {
+            return "🌦️"; // Drizzle day
+        }
+        return "🌧️"; // Drizzle night
     } else if (code >= 500 && code < 600) {
         return "🌧️"; // Rain
     } else if (code >= 600 && code < 700) {
@@ -21,7 +24,10 @@ function getWeatherIcon(weather) {
         }
         return "🌥️"; // Few clouds night
     } else if (code === 802) {
-        return "⛅"; // Scattered clouds
+        if (weather.icon.endsWith("d")) {
+            return "⛅"; // Scattered clouds day
+        }
+        return "☁️"; // Scattered clouds night
     } else if (code === 803 || code === 804) {
         return "☁️"; // Broken/Overcast clouds
     }
