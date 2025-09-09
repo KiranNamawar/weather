@@ -1,4 +1,4 @@
-import { initRecentCities } from "./ui/recent-cities.js";
+import { addRecentCity, initRecentCities } from "./ui/recent-cities.js";
 import {
     getCurrentWeather,
     getForecastWeather,
@@ -21,14 +21,10 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
     if (permission.state === "granted") {
         const location = await getCurrentLocation();
-        currentLocation = location;
-        const data = await getData(location);
-        render(data);
+        await updateWeather(location);
     } else {
         const location = await getLocationByIP();
-        currentLocation = location;
-        const data = await getData(location);
-        render(data);
+        await updateWeather(location);
     }
 
     // Set up Current Location Button
@@ -36,9 +32,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         .getElementById("my-location")
         .addEventListener("click", async () => {
             const location = await getCurrentLocation();
-            currentLocation = location;
-            const data = await getData(location);
-            render(data);
+            await updateWeather(location);
         });
 
     // Set up Search City Button
@@ -46,9 +40,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         .getElementById("search-city")
         .addEventListener("click", async () => {
             const location = await getLocationFromCity();
-            currentLocation = location;
-            const data = await getData(location);
-            render(data);
+            await updateWeather(location);
         });
 
     document
@@ -62,30 +54,24 @@ window.addEventListener("DOMContentLoaded", async () => {
             const data = await getData(currentLocation);
             render(data);
         });
+
+    // Handle recent cities selection using custom event
+    document.addEventListener("citySelected", async (event) => {
+        const selectedCity = event.detail;
+        await updateWeather(selectedCity);
+    });
 });
 
 async function getData(location) {
     console.log("location:", location, "currentLocation:", currentLocation);
-    if (!location) {
-        console.error("No location provided.");
-        return null;
-    }
     const current = await getCurrentWeather(
         location.latitude,
         location.longitude
     );
-    if (!current) {
-        console.error("Failed to fetch current weather data.");
-        return null;
-    }
     const forecast = await getForecastWeather(
         location.latitude,
         location.longitude
     );
-    if (!forecast) {
-        console.error("Failed to fetch forecast weather data.");
-        return null;
-    }
     return { location, current, forecast };
 }
 
@@ -94,9 +80,16 @@ function render(data) {
     renderForecastWeather(data);
 }
 
-// Handle recent cities selection using custom event
-document.addEventListener("citySelected", (event) => {
-    const selectedCity = event.detail;
-    console.log("Selected from recent cities:", selectedCity);
-    getData(selectedCity).then(render);
-});
+async function updateWeather(location) {
+    if (!location) {
+        console.error("No location provided.");
+        return;
+    }
+
+    currentLocation = location;
+    addRecentCity(location);
+    const data = await getData(location);
+    if (data) {
+        render(data);
+    }
+}
