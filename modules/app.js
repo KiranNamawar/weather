@@ -8,12 +8,18 @@ import { renderCurrentWeather } from "./ui/current.js";
 import { renderForecastWeather } from "./ui/forecast.js";
 import { getCurrentLocation, getLocationByIP } from "./api/location.js";
 import { getLocationFromCity } from "./ui/search.js";
+import { toast } from "./ui/toast.js";
+import { showLoading } from "./ui/loading.js";
 
 let currentLocation = null;
 
 window.addEventListener("DOMContentLoaded", async () => {
     // Initialize recent cities on page load
     initRecentCities();
+
+    // Show loading indicators when app starts
+    showLoading("current-weather");
+    showLoading("forecast-weather");
 
     // Initial data fetch based on geolocation permission
     const permission = await navigator.permissions.query({
@@ -30,9 +36,31 @@ window.addEventListener("DOMContentLoaded", async () => {
     // Set up Current Location Button
     document
         .getElementById("my-location")
-        .addEventListener("click", async () => {
-            const location = await getCurrentLocation();
-            await updateWeather(location);
+        .addEventListener("click", async (event) => {
+            const button = event.target.closest("button");
+            const originalHTML = button.innerHTML;
+
+            // Show loading state
+            button.innerHTML = `
+                <span class="align-middle">
+                    <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block"></div>
+                </span>
+                <span class="hidden md:inline"> Getting Location... </span>
+            `;
+            button.disabled = true;
+            button.classList.add("opacity-75", "cursor-not-allowed");
+
+            try {
+                const location = await getCurrentLocation();
+                await updateWeather(location);
+            } catch (error) {
+                console.error("Location error:", error);
+            } finally {
+                // Restore button
+                button.innerHTML = originalHTML;
+                button.disabled = false;
+                button.classList.remove("opacity-75", "cursor-not-allowed");
+            }
         });
 
     // Set up Search City Button
@@ -63,6 +91,10 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function getData(location) {
+    // Show loading indicators
+    showLoading("current-weather");
+    showLoading("forecast-weather");
+
     const current = await getCurrentWeather(
         location.latitude,
         location.longitude
@@ -81,7 +113,7 @@ function render(data) {
 
 async function updateWeather(location) {
     if (!location) {
-        console.error("No location provided.");
+        toast.error("No location provided.");
         return;
     }
 

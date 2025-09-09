@@ -1,4 +1,4 @@
-import { getWeatherIcon } from "../util.js";
+import { getWeatherIcon } from "../icon.js";
 
 const section = document.getElementById("forecast-weather");
 
@@ -79,7 +79,6 @@ function renderDailyForecast(list) {
 }
 
 function renderForecastWeather(data) {
-    console.log("Rendering forecast weather:", data);
     section.innerHTML = `
         <h2 class="text-2xl mt-4 font-bold">
             <span class=" text-yellow-500 align-middle"><i class="fi fi-rc-clock-five"></i></span>

@@ -1,4 +1,5 @@
 import { reverseGeoCodingApiEndpoint } from "./weather.js";
+import { toast } from "../ui/toast.js";
 
 const IP_API_KEY = "1e3e99b30f59e4";
 
@@ -23,7 +24,7 @@ async function getCountryName(countryCode) {
         const data = await response.json();
         return data[0].name.common;
     } catch (error) {
-        console.error("Error fetching country name:", error);
+        toast.error("Error fetching country name.");
         return null;
     }
 }
@@ -46,7 +47,7 @@ async function getLocationByIP() {
             country_code: data.country,
         };
     } catch (error) {
-        console.error("Error fetching location by IP:", error);
+        toast.error("Error fetching location by IP.");
         return null;
     }
 }
@@ -60,7 +61,6 @@ async function getCurrentLocation() {
                     resolve({ latitude, longitude });
                 },
                 (error) => {
-                    console.error("Error getting location:", error);
                     resolve(null);
                 },
                 {
@@ -92,10 +92,11 @@ async function getCurrentLocation() {
                 country_code: data.country,
             };
         } else {
+            toast.error("Error fetching current location. Using IP location instead.");
             return await getLocationByIP();
         }
     } catch (error) {
-        console.error("Error fetching current location:", error);
+        toast.error("Error fetching current location, try searching for a city.");
         return null;
     }
 }
@@ -131,7 +132,7 @@ async function searchForCity(city) {
         GEOCODING_API_CACHE[searchTerm] = results;
         return results;
     } catch (error) {
-        console.error("Error searching for city:", error);
+        toast.error("Error searching for city.");
         return [];
     }
 }

@@ -1,3 +1,5 @@
+import { toast } from "../ui/toast.js";
+
 const WEATHER_API_KEY = "d3d175e8b848468220e5e437ef7601c3";
 
 let units = "metric"; // metric or imperial
@@ -53,7 +55,7 @@ async function getCurrentWeather(lat, lon) {
 
         return newData;
     } catch (error) {
-        console.error("Error fetching current weather:", error);
+        toast.error("Error fetching current weather data.");
         return null;
     }
 }
@@ -96,7 +98,7 @@ async function getForecastWeather(lat, lon) {
 
         return newData;
     } catch (error) {
-        console.error("Error fetching forecast weather:", error);
+        toast.error("Error fetching forecast weather data.");
         return null;
     }
 }

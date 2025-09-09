@@ -46,7 +46,11 @@
                 <form method="dialog" class="flex flex-col gap-4 w-full">
                     <div class="flex justify-between items-center">
                         <h2 class="text-2xl">Search City</h2>
-                        <button id="close-search" type="button" class="pt-1 px-2">
+                        <button
+                            id="close-search"
+                            type="button"
+                            class="pt-1 px-2"
+                        >
                             <i class="fi fi-rc-cross"></i>
                         </button>
                     </div>
@@ -74,7 +78,7 @@
             >
                 <button
                     id="my-location"
-                    class="pt-1 px-2 md:py-2 md:px-4 rounded-lg border-primary border-2 bg-primary shadow-md"
+                    class="pt-1 px-2 md:py-2 md:px-4 rounded-lg border-primary border-2 bg-primary shadow-md hover:bg-primary/80 hover:scale-105 transition-all duration-200 active:scale-95"
                 >
                     <span class="align-middle">
                         <i class="fi fi-rc-location-crosshairs"></i>
@@ -102,15 +106,19 @@
                     >
                 </button>
                 <select id="recent-cities" class="p-2 rounded-lg">
-                    <option value="" disabled selected>
-                        Recent Cities
-                    </option>
+                    <option value="" disabled selected>Recent Cities</option>
                 </select>
             </section>
-            <section id="current-weather" class="m-4 md:max-w-3/4 md:mx-auto flex flex-col gap-4 md:gap-8">
+            <section
+                id="current-weather"
+                class="m-4 md:max-w-3/4 md:mx-auto flex flex-col gap-4 md:gap-8"
+            >
                 <!-- Current Weather Data will be displayed here -->
             </section>
-            <section id="forecast-weather" class="m-4 md:max-w-3/4 md:mx-auto flex flex-col gap-4 md:gap-8">
+            <section
+                id="forecast-weather"
+                class="m-4 md:max-w-3/4 md:mx-auto flex flex-col gap-4 md:gap-8"
+            >
                 <!-- Forecast Weather Data will be displayed here -->
             </section>
         </main>
