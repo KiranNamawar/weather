@@ -1,0 +1,105 @@
+const WEATHER_API_KEY = "d3d175e8b848468220e5e437ef7601c3";
+
+let units = "metric"; // metric or imperial
+
+function currentWeatherApiEndpoint(lat, lon) {
+    return `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=${units}&appid=${WEATHER_API_KEY}`;
+}
+
+function forecastWeatherApiEndpoint(lat, lon) {
+    return `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${units}&appid=${WEATHER_API_KEY}`;
+}
+
+function reverseGeoCodingApiEndpoint(lat, lon, limit = 5) {
+    return `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=${limit}&appid=${WEATHER_API_KEY}`;
+}
+
+// Current Weather
+const CURRENT_WEATHER_CACHE = []; // 10min
+
+async function getCurrentWeather(lat, lon) {
+    const DURATION = 1000 * 60 * 10; // 10min
+    const index = CURRENT_WEATHER_CACHE.findIndex(
+        (item) =>
+            item.units === units &&
+            Math.round(item.coord.lat * 10000) ===
+                Math.round(Number(lat) * 10000) &&
+            Math.round(item.coord.lon * 10000) ===
+                Math.round(Number(lon) * 10000)
+    );
+    if (
+        index !== -1 &&
+        CURRENT_WEATHER_CACHE[index].time + DURATION > Date.now()
+    ) {
+        return CURRENT_WEATHER_CACHE[index];
+    }
+    try {
+        const response = await fetch(currentWeatherApiEndpoint(lat, lon));
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const newData = {
+            ...data,
+            units,
+            time: Date.now(),
+        };
+
+        if (index !== -1) {
+            CURRENT_WEATHER_CACHE[index] = newData;
+        } else {
+            CURRENT_WEATHER_CACHE.push(newData);
+        }
+
+        return newData;
+    } catch (error) {
+        console.error("Error fetching current weather:", error);
+        return null;
+    }
+}
+
+// Forecast Weather
+const FORECAST_WEATHER_CACHE = []; // 3hr
+
+async function getForecastWeather(lat, lon) {
+    const DURATION = 1000 * 60 * 60 * 3; // 3hr
+    const index = FORECAST_WEATHER_CACHE.findIndex(
+        (item) =>
+            item.units === units &&
+            Math.round(item.city.coord.lat * 10000) ===
+                Math.round(Number(lat) * 10000) &&
+            Math.round(item.city.coord.lon * 10000) ===
+                Math.round(Number(lon) * 10000)
+    );
+    if (
+        index !== -1 &&
+        FORECAST_WEATHER_CACHE[index].time + DURATION > Date.now()
+    ) {
+        return FORECAST_WEATHER_CACHE[index];
+    }
+    try {
+        const response = await fetch(forecastWeatherApiEndpoint(lat, lon));
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const newData = {
+            ...data,
+            units,
+            time: Date.now(),
+        };
+        if (index !== -1) {
+            FORECAST_WEATHER_CACHE[index] = newData;
+        } else {
+            FORECAST_WEATHER_CACHE.push(newData);
+        }
+
+        return newData;
+    } catch (error) {
+        console.error("Error fetching forecast weather:", error);
+        return null;
+    }
+}
+
+
+export { getCurrentWeather, getForecastWeather, reverseGeoCodingApiEndpoint };
