@@ -10,6 +10,7 @@ import { getCurrentLocation, getLocationByIP } from "./api/location.js";
 import { getLocationFromCity } from "./ui/search.js";
 import { toast } from "./ui/toast.js";
 import { showLoading } from "./ui/loading.js";
+import { setBackground } from "./ui/background.js";
 
 let currentLocation = null;
 
@@ -116,11 +117,12 @@ async function updateWeather(location) {
         toast.error("No location provided.");
         return;
     }
-
     currentLocation = location;
     addRecentCity(location);
     const data = await getData(location);
     if (data) {
+        const isDay = data.current.weather[0].icon.includes("d");
+        setBackground(data.current.weather[0].main, isDay);
         render(data);
     }
 }
