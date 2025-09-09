@@ -1,8 +1,12 @@
 /**
  * Loading indicator utility for weather sections
  */
+function isLoading(sectionId) {
+    const section = document.getElementById(sectionId);
+    return section && section.querySelector("[data-loading='true']");
+}
 
-export function showLoading(sectionId, message = "Loading weather data...") {
+function showLoading(sectionId, message = "Loading weather data...") {
     const section = document.getElementById(sectionId);
     if (!section) return;
 
@@ -19,3 +23,5 @@ export function showLoading(sectionId, message = "Loading weather data...") {
         </div>
     `;
 }
+
+export { showLoading };
