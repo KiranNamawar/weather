@@ -1,5 +1,4 @@
 function getWeatherIcon(weather) {
-    console.log("Getting icon for weather:", weather);
     const code = weather.id;
     if (code >= 200 && code < 300) {
         return "⛈️"; // Thunderstorm

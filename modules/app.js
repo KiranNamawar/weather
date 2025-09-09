@@ -63,7 +63,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function getData(location) {
-    console.log("location:", location, "currentLocation:", currentLocation);
     const current = await getCurrentWeather(
         location.latitude,
         location.longitude
