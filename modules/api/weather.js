@@ -101,5 +101,14 @@ async function getForecastWeather(lat, lon) {
     }
 }
 
+function toggleUnits() {
+    units = units === "metric" ? "imperial" : "metric";
+    return units;
+}
 
-export { getCurrentWeather, getForecastWeather, reverseGeoCodingApiEndpoint };
+export {
+    getCurrentWeather,
+    getForecastWeather,
+    reverseGeoCodingApiEndpoint,
+    toggleUnits,
+};
